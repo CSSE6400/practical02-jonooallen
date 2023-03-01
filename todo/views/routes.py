@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from todo.models import db
 from todo.models.todo import Todo
-from datetime import datetime
+from datetime import datetime, timedelta
  
 api = Blueprint('api', __name__, url_prefix='/api/v1') 
 
@@ -26,6 +26,7 @@ def get_todos():
     # Query Variables
     # Completed Query
     completed_var = request.args.get("completed")
+    num_of_days_filter_var = request.args.get("window")
 
 
     todos = Todo.query.all()
@@ -34,8 +35,14 @@ def get_todos():
     for todo in todos:
         if completed_var != None:
             if str(todo.completed).lower() != completed_var:
-                continue
-            
+                break
+
+        if num_of_days_filter_var != None:
+            current_time = datetime.utcnow()
+            deadline = timedelta(days=int(num_of_days_filter_var)) + current_time
+            if todo.deadline_at > deadline:
+                break
+        
         result.append(todo.to_dict())
     return jsonify(result)
 
