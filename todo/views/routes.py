@@ -35,13 +35,14 @@ def get_todos():
     for todo in todos:
         if completed_var != None:
             if str(todo.completed).lower() != completed_var:
-                break
+                continue
 
         if num_of_days_filter_var != None:
             current_time = datetime.utcnow()
             deadline = timedelta(days=int(num_of_days_filter_var)) + current_time
-            if todo.deadline_at > deadline:
-                break
+            if todo.deadline_at != None:
+                if todo.deadline_at > deadline:
+                    continue
         
         result.append(todo.to_dict())
     return jsonify(result)
