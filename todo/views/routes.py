@@ -56,6 +56,16 @@ def get_todo(todo_id):
 
 @api.route('/todos', methods=['POST'])
 def create_todo():
+    for key in request.json.keys():
+        if not (key == "title" or 
+                key == "description" or
+                key == "completed" or
+                key == "deadline_at"):
+            return jsonify({"error": "Attempted to add unknown database field"}), 400
+    request_fields = request.json
+    if not "title" in request_fields:
+        return jsonify({"error": "No Title",}), 400
+    
     todo = Todo(
         title=request.json.get('title'),
         description=request.json.get('description'),
@@ -73,6 +83,13 @@ def update_todo(todo_id):
     todo = Todo.query.get(todo_id)
     if todo is None:
         return jsonify({'error': 'Todo not found'}), 404
+    
+    for key in request.json.keys():
+        if not (key == "title" or 
+                key == "description" or
+                key == "completed" or
+                key == "deadline_at"):
+            return jsonify({"error": "Attempted to add unknown database field"}), 400
     
     todo.title = request.json.get('title', todo.title)
     todo.description = request.json.get('description', todo.description)
