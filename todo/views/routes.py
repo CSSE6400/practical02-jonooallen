@@ -23,9 +23,19 @@ def health():
 
 @api.route('/todos', methods=['GET'])
 def get_todos():
+    # Query Variables
+    # Completed Query
+    completed_var = request.args.get("completed")
+
+
     todos = Todo.query.all()
     result = []
+
     for todo in todos:
+        if completed_var != None:
+            if str(todo.completed).lower() != completed_var:
+                continue
+            
         result.append(todo.to_dict())
     return jsonify(result)
 
@@ -47,9 +57,7 @@ def create_todo():
         todo.deadline_at = datetime.fromisoformat(request.json.get('deadline_at'))
 
     db.session.add(todo)
-
     db.session.commit()
-    
     return jsonify(todo.to_dict()), 201
 
 @api.route('/todos/<int:todo_id>', methods=['PUT'])
