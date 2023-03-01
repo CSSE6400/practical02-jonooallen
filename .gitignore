@@ -2,5 +2,3 @@ tests/__pycache__/
 todo/__pycache__/
 todo/models/__pycache__/
 todo/views/__pycache__/
-/Pipfile
-/Pipfile.lock
